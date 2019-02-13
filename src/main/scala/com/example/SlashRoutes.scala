@@ -7,28 +7,22 @@ import scala.concurrent.duration._
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.Route
-import akka.http.scaladsl.server.directives.MethodDirectives.delete
-import akka.http.scaladsl.server.directives.MethodDirectives.get
 import akka.http.scaladsl.server.directives.MethodDirectives.post
 import akka.http.scaladsl.server.directives.RouteDirectives.complete
-import akka.http.scaladsl.server.directives.PathDirectives.path
 
-import scala.concurrent.Future
-import com.example.UserRegistryActor._
-import akka.pattern.ask
 import akka.util.Timeout
 
 //#user-routes-class
-trait UserRoutes extends JsonSupport {
+trait SlashRoutes extends JsonSupport {
   //#user-routes-class
 
   // we leave these abstract, since they will be provided by the App
   implicit def system: ActorSystem
 
-  lazy val log = Logging(system, classOf[UserRoutes])
+  lazy val log = Logging(system, classOf[SlashRoutes])
 
   // other dependencies that UserRoutes use
-  def userRegistryActor: ActorRef
+  def sampleEloActor: ActorRef
 
   // Required by the `ask` (?) method below
   implicit lazy val timeout = Timeout(5.seconds) // usually we'd obtain the timeout from the system's configuration
@@ -36,7 +30,7 @@ trait UserRoutes extends JsonSupport {
   //#all-routes
   //#users-get-post
   //#users-get-delete   
-  lazy val userRoutes: Route =
+  /*lazy val userRoutes: Route =
     pathPrefix("users") {
       concat(
         //#users-get-delete
@@ -88,4 +82,24 @@ trait UserRoutes extends JsonSupport {
       //#users-get-delete
     }
   //#all-routes
+*/
+  lazy val appRoutes: Route =
+  pathPrefix("slash") {
+    concat(
+      pathPrefix("report") {
+        post {
+          //TODO: Task an actor with updating ELOs
+          val slackResponse = "placeholder"
+          log.info("POST slash/report hit")
+          complete((StatusCodes.OK, slackResponse))
+        }
+      },
+      pathPrefix("leaderboard") {
+        post {
+          log.info("POST slash/leaderboard hit")
+          complete(StatusCodes.OK)
+        }
+      }
+    )
+  }
 }

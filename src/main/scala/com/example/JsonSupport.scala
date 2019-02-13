@@ -1,6 +1,6 @@
 package com.example
 
-import com.example.UserRegistryActor.ActionPerformed
+import com.example.SampleEloActor.ReportGame
 
 //#json-support
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
@@ -10,9 +10,8 @@ trait JsonSupport extends SprayJsonSupport {
   // import the default encoders for primitive types (Int, String, Lists etc)
   import DefaultJsonProtocol._
 
-  implicit val userJsonFormat = jsonFormat3(User)
-  implicit val usersJsonFormat = jsonFormat1(Users)
+  implicit val userJsonFormat = jsonFormat2(User)
+  implicit val teamJsonFormat = jsonFormat2(Team)
 
-  implicit val actionPerformedJsonFormat = jsonFormat1(ActionPerformed)
+  implicit val reportGameJsonFormat = jsonFormat3(ReportGame)
 }
-//#json-support
