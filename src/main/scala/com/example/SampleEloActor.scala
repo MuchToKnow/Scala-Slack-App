@@ -3,6 +3,7 @@ package com.example
 //#user-registry-actor
 import akka.actor.{Actor, ActorLogging, Props}
 import akka.http.scaladsl.model.StatusCodes
+import EloUtil._
 
 final case class User(id: String, elo: Double)
 //Represents a channel of Users
@@ -15,29 +16,10 @@ object SampleEloActor {
 }
 
 class SampleEloActor extends Actor with ActorLogging {
-  final val eloScale = 40
-  final val startingElo = 1200
   import SampleEloActor._
 
   //Will be in a DB eventually
   var teams = Seq.empty[Team]
-
-  /**
-    * Calculates new elo of winner and loser, returning a tuple of the new Elos.
-    * @param winner
-    * @param loser
-    * @returns (Double, Double)
-    */
-  def calculateElo(winner: Double, loser: Double) = {
-    //Estimated probability that the winner would win
-    val pWinner = 1/(1 + scala.math.pow(10, ((loser - winner)/400)))
-    //Same for the loser
-    val pLoser = 1 - pWinner
-
-    val winnerNewElo = winner + (eloScale * (1 - pWinner))
-    val loserNewElo = loser + (eloScale * (0 - pLoser))
-    (winnerNewElo, loserNewElo)
-  }
 
   /**
     * Initializes a team with the two users that played the match and saves it to teams
